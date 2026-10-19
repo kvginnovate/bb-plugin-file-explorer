@@ -172,7 +172,11 @@ function ExplorerPage() {
   const fileCount = listing ? listing.entries.length - dirCount : 0;
 
   return (
-    <div className="mx-auto flex h-full w-full max-w-3xl flex-col gap-5 overflow-y-auto overflow-x-hidden p-6 pb-10" style={{ WebkitOverflowScrolling: "touch" }}>
+    <div className="absolute inset-0 overflow-hidden" style={{ height: "100%", minHeight: "100dvh" }}>
+      <div
+        className="mx-auto flex h-full w-full max-w-3xl flex-col gap-5 overflow-y-auto overflow-x-hidden p-6 pb-16"
+        style={{ WebkitOverflowScrolling: "touch", overscrollBehavior: "contain" }}
+      >
       {/* Header */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2.5">
@@ -365,6 +369,7 @@ function ExplorerPage() {
           )}
         </Card>
       )}
+      </div>
     </div>
   );
 }
