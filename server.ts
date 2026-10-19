@@ -71,8 +71,13 @@ export const explorerListing = z.object({
       hostId: z.string().min(1).max(256).optional(),
       directory: z.string().trim().min(1).max(32768),
       name: z.string().trim().min(1).max(255),
+      createProject: z.boolean().optional(),
     }),
-    output: z.object({ path: z.string() }),
+    output: z.object({
+      path: z.string(),
+      projectId: z.string().nullable(),
+      projectError: z.string().nullable(),
+    }),
   },
  });
 
@@ -174,7 +179,27 @@ async function resolveHostId(bb: BbPluginApi, hostId?: string): Promise<{ id: st
       if (base === null) throw new Error("Not an absolute Windows path.");
       const full = `${base}\\${name}`;
       await bb.sdk.files.mkdir({ hostId: host.id, path: full });
-      return { path: full };
+      if (raw.createProject === false) {
+        return { path: full, projectId: null, projectError: null };
+      }
+      // Register as a project right away so it shows in the sidebar without
+      // waiting for any polling job. Folder creation already succeeded, so a
+      // registration failure is reported, not thrown.
+      try {
+        const key = full.toLowerCase();
+        const projects = await bb.sdk.projects.list();
+        const existing = projects.find((p) =>
+          p.sources.some((s) => s.hostId === host.id && s.path.replace(/\\+$/, "").toLowerCase() === key),
+        );
+        if (existing) return { path: full, projectId: existing.id, projectError: null };
+        const created = await bb.sdk.projects.create({
+          name,
+          source: { hostId: host.id, path: full, type: "local_path" },
+        });
+        return { path: full, projectId: created.id, projectError: null };
+      } catch (e) {
+        return { path: full, projectId: null, projectError: e instanceof Error ? e.message : String(e) };
+      }
     },
   });
 

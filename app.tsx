@@ -98,6 +98,7 @@ function ExplorerPage() {
   const [newName, setNewName] = useState<string>("");
   const [creating, setCreating] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
+  const [notice, setNotice] = useState<string>("");
 
   useEffect(() => {
     rpc.call("hosts_list").then(
@@ -138,9 +139,15 @@ function ExplorerPage() {
     if (!listing || newName.trim() === "") return;
     setCreating(true);
     setError("");
+    setNotice("");
     try {
-      const res = await rpc.call("folder_create", { ...(hostId !== "" ? { hostId } : {}), directory: listing.directory, name: newName.trim() });
+      const res = await rpc.call("folder_create", { ...(hostId !== "" ? { hostId } : {}), directory: listing.directory, name: newName.trim(), createProject: true });
       setNewName("");
+      if (res.projectId !== null) {
+        setNotice(`Created ${res.path} and added it to your projects.`);
+      } else if (res.projectError !== null) {
+        setError(`Folder created, but it couldn't be added as a project: ${res.projectError}`);
+      }
       await explore(res.path);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -256,6 +263,13 @@ function ExplorerPage() {
           </div>
         </CardContent>
       </Card>
+
+      {notice !== "" && (
+        <div className="flex items-start gap-2 rounded-md border border-border bg-muted/40 p-3 text-sm">
+          <Glyph name="Check" className="mt-0.5 size-4 shrink-0" />
+          <span className="min-w-0 break-words">{notice}</span>
+        </div>
+      )}
 
       {error !== "" && (
         <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
