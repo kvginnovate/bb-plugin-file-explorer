@@ -172,7 +172,7 @@ function ExplorerPage() {
   const fileCount = listing ? listing.entries.length - dirCount : 0;
 
   return (
-    <div className="mx-auto flex max-h-full w-full max-w-3xl flex-col gap-5 overflow-y-auto p-6 pb-10">
+    <div className="mx-auto flex h-full w-full max-w-3xl flex-col gap-5 overflow-y-auto overflow-x-hidden p-6 pb-10" style={{ WebkitOverflowScrolling: "touch" }}>
       {/* Header */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2.5">
@@ -329,7 +329,7 @@ function ExplorerPage() {
               <p className="text-xs text-muted-foreground">Nothing here yet — create a folder above.</p>
             </div>
           ) : (
-            <ul className="divide-y divide-border overflow-y-auto" style={{ maxHeight: "50vh", WebkitOverflowScrolling: "touch" }}>
+            <ul className="divide-y divide-border">
               {listing.entries.map((e) => {
                 const isDir = e.kind === "directory";
                 return (
@@ -347,7 +347,7 @@ function ExplorerPage() {
                       {isDir && (
                         <Icon
                           name="ChevronRight"
-                          className="ml-auto size-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"
+                          className="ml-auto size-4 shrink-0 text-muted-foreground/60 transition-colors group-hover:text-muted-foreground"
                         />
                       )}
                     </button>
