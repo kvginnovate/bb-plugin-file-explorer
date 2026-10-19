@@ -7,7 +7,7 @@ import { definePluginApp, useRpc } from "@get-bb/plugin-sdk/app";
 import type { rpcContract } from "./server";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Icon } from "@/components/ui/icon";
+import { FolderInputGlyph, Glyph } from "@/components/glyph";
 import {
   Card,
   CardContent,
@@ -52,7 +52,7 @@ function AnyFolderInputs({ value, onChange }: AnyFolderProps) {
       </label>
       <div className="relative">
         <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground">
-          <Icon name="FolderInput" className="size-4" />
+          <Glyph name="FolderInput" className="size-4" />
         </span>
         <Input
           id="any-folder-path"
@@ -172,16 +172,13 @@ function ExplorerPage() {
   const fileCount = listing ? listing.entries.length - dirCount : 0;
 
   return (
-    <div className="absolute inset-0 overflow-hidden" style={{ height: "100%", minHeight: "100dvh" }}>
-      <div
-        className="mx-auto flex h-full w-full max-w-3xl flex-col gap-5 overflow-y-auto overflow-x-hidden p-6 pb-16"
-        style={{ WebkitOverflowScrolling: "touch", overscrollBehavior: "contain" }}
-      >
+    <div className="h-full w-full overflow-y-auto overflow-x-hidden" style={{ WebkitOverflowScrolling: "touch" }}>
+    <div className="mx-auto w-full max-w-3xl space-y-5 p-4 pb-16 sm:p-6">
       {/* Header */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2.5">
           <span className="flex size-9 items-center justify-center rounded-lg bg-foreground text-background">
-            <Icon name="FolderInput" className="size-5" />
+            <Glyph name="FolderInput" className="size-5" />
           </span>
           <div>
             <h1 className="text-lg font-semibold leading-none tracking-tight">Path explorer</h1>
@@ -198,7 +195,7 @@ function ExplorerPage() {
       <Card>
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-sm">
-            <Icon name="Server" className="size-4 text-muted-foreground" />
+            <Glyph name="Server" className="size-4 text-muted-foreground" />
             Source
           </CardTitle>
           <CardDescription>Choose where to browse from.</CardDescription>
@@ -231,7 +228,7 @@ function ExplorerPage() {
                       variant={active ? "default" : "outline"}
                       onClick={() => void explore(d)}
                     >
-                      <Icon name="HardDrive" className="size-4" />
+                      <Glyph name="HardDrive" className="size-4" />
                       {d.replace(/\\$/, "")}
                     </Button>
                   );
@@ -252,7 +249,7 @@ function ExplorerPage() {
                 spellCheck={false}
               />
               <Button onClick={() => void explore()} disabled={busy}>
-                {busy ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="ArrowRight" className="size-4" />}
+                {busy ? <Glyph name="Loader2" className="size-4 animate-spin" /> : <Glyph name="ArrowRight" className="size-4" />}
                 {busy ? "Loading" : "Go"}
               </Button>
             </div>
@@ -262,7 +259,7 @@ function ExplorerPage() {
 
       {error !== "" && (
         <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
-          <Icon name="TriangleAlert" className="mt-0.5 size-4 shrink-0" />
+          <Glyph name="TriangleAlert" className="mt-0.5 size-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
@@ -275,20 +272,20 @@ function ExplorerPage() {
             <nav className="flex min-w-0 flex-1 flex-wrap items-center gap-0.5 text-sm" aria-label="Folder trail">
               {crumbs.map((c, i) => (
                 <span key={c.path} className="flex items-center gap-0.5">
-                  {i > 0 && <Icon name="ChevronRight" className="size-3.5 text-muted-foreground" />}
+                  {i > 0 && <Glyph name="ChevronRight" className="size-3.5 text-muted-foreground" />}
                   <button
                     className="flex max-w-[11rem] items-center gap-1 truncate rounded px-1.5 py-1 hover:bg-state-hover"
                     onClick={() => void explore(c.path)}
                     title={c.path}
                   >
-                    <Icon name={i === 0 ? "HardDrive" : "Folder"} className="size-3.5 shrink-0 text-muted-foreground" />
+                    <Glyph name={i === 0 ? "HardDrive" : "Folder"} className="size-3.5 shrink-0 text-muted-foreground" />
                     <span className="truncate">{c.label}</span>
                   </button>
                 </span>
               ))}
             </nav>
             <Button variant="ghost" size="sm" className="shrink-0" onClick={copyPath}>
-              <Icon name={copied ? "Check" : "Copy"} className="size-4" />
+              <Glyph name={copied ? "Check" : "Copy"} className="size-4" />
               {copied ? "Copied" : "Copy path"}
             </Button>
           </div>
@@ -301,12 +298,12 @@ function ExplorerPage() {
               onClick={() => void explore(listing.parent ?? "")}
               disabled={!listing.parent}
             >
-              <Icon name="ArrowUp" className="size-4" />
+              <Glyph name="ArrowUp" className="size-4" />
               Up
             </Button>
-            <div className="flex flex-1 items-center gap-2">
+            <div className="flex min-w-[14rem] flex-1 items-center gap-2">
               <Input
-                className="h-8 flex-1"
+                className="h-8 min-w-0 flex-1"
                 placeholder="New folder name"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
@@ -314,7 +311,7 @@ function ExplorerPage() {
                 spellCheck={false}
               />
               <Button size="sm" onClick={() => void createFolder()} disabled={creating || newName.trim() === ""}>
-                {creating ? <Icon name="Loader2" className="size-4 animate-spin" /> : <Icon name="FolderPlus" className="size-4" />}
+                {creating ? <Glyph name="Loader2" className="size-4 animate-spin" /> : <Glyph name="FolderPlus" className="size-4" />}
                 New folder
               </Button>
             </div>
@@ -323,12 +320,12 @@ function ExplorerPage() {
           {/* Listing */}
           {busy ? (
             <div className="flex items-center justify-center gap-2 py-12 text-sm text-muted-foreground">
-              <Icon name="Loader2" className="size-4 animate-spin" />
+              <Glyph name="Loader2" className="size-4 animate-spin" />
               Loading…
             </div>
           ) : listing.entries.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
-              <Icon name="FolderOpen" className="size-8 text-muted-foreground/50" />
+              <Glyph name="FolderOpen" className="size-8 text-muted-foreground/50" />
               <p className="text-sm font-medium">Empty folder</p>
               <p className="text-xs text-muted-foreground">Nothing here yet — create a folder above.</p>
             </div>
@@ -343,13 +340,13 @@ function ExplorerPage() {
                       onClick={() => { if (isDir) void explore(e.path); else setPath(e.path); }}
                       title={e.path}
                     >
-                      <Icon
+                      <Glyph
                         name={isDir ? "Folder" : "File"}
                         className={isDir ? "size-4 shrink-0 text-foreground" : "size-4 shrink-0 text-muted-foreground"}
                       />
                       <span className="truncate">{e.name}</span>
                       {isDir && (
-                        <Icon
+                        <Glyph
                           name="ChevronRight"
                           className="ml-auto size-4 shrink-0 text-muted-foreground/60 transition-colors group-hover:text-muted-foreground"
                         />
@@ -369,12 +366,13 @@ function ExplorerPage() {
           )}
         </Card>
       )}
-      </div>
+    </div>
     </div>
   );
 }
 
 export default definePluginApp((app) => {
+  app.experimental_icons.register({ name: "file-explorer/FolderInput", component: FolderInputGlyph });
   app.slots.experimental_environmentProviderInputs({
     environmentProviderId: "any-folder",
     component: AnyFolderInputs,
@@ -382,7 +380,7 @@ export default definePluginApp((app) => {
   app.slots.navPanel({
     id: "file-explorer",
     title: "File Explorer",
-    icon: "FolderInput",
+    icon: "file-explorer/FolderInput",
     path: "file-explorer",
     component: ExplorerPage,
   });
